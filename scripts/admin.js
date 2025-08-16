@@ -1,149 +1,100 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Toni Redman — Actor • Director • Producer • Coach (OC)</title>
-  <meta name="description" content="Orange County–based actor, director, producer, and on-camera acting coach. Classes, private coaching, and hire-for-projects in OC/LA and worldwide over Zoom." />
-  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles/style.css">
-</head>
-<body>
-  <a class="skip" href="#main">Skip to content</a>
-  <header class="site-header">
-    <div class="wrap">
-      <div class="brand">
-        <a href="#" class="logo">
-          <img src="assets/favicon.svg" alt="" width="28" height="28">
-          <span id="brand-name">Toni Redman</span>
-        </a>
-        <span id="brand-tagline" class="tagline">Actor • Director • Producer • Coach — Orange County</span>
-      </div>
-      <nav class="nav">
-        <a href="#about">About</a>
-        <a href="#acting">Acting</a>
-        <a href="#coaching">Coaching & Classes</a>
-        <a href="#hire">Hire Toni</a>
-        <a href="#testimonials">Testimonials</a>
-        <a href="#contact">Contact</a>
-        <!-- Remove if you want the editor hidden from the navbar -->
-        <a href="admin.html">Edit</a>
-      </nav>
-    </div>
-  </header>
+import { siteConfig as base } from './config.js';
+const $ = (id) => document.getElementById(id);
+const state = structuredClone(base);
 
-  <main id="main">
-    <section id="hero" class="hero">
-      <div class="wrap hero-grid">
-        <div class="hero-copy">
-          <h1><span id="name">Toni Redman</span></h1>
-          <p id="tagline" class="lead">Actor • Director • Producer • Coach — Orange County</p>
-          <div class="cta-row">
-            <a id="imdbLink" class="btn" href="#" target="_blank" rel="noopener">IMDb</a>
-            <a class="btn alt" href="#contact">Book a Session</a>
-          </div>
-          <div class="socials" id="socials"></div>
-        </div>
-        <div class="hero-headshot">
-          <img id="headshot" src="assets/headshot.svg" alt="Headshot of Toni Redman" loading="eager">
-          <div class="flower-wrap">
-            <svg id="flower" viewBox="0 0 200 200" role="img" aria-label="Decorative flower"></svg>
-          </div>
-        </div>
-      </div>
-    </section>
+function renderArray(containerId, items, schema){
+  const box = $(containerId);
+  box.innerHTML = '';
+  (items||[]).forEach((item, i) => {
+    const row = document.createElement('div');
+    row.className = 'item';
+    row.innerHTML = schema.map(f => `
+      <label>${f.label}<input type="${f.type||'text'}" data-idx="${i}" data-key="${f.key}" value="${(item[f.key] ?? '').toString().replace(/"/g,'&quot;')}" ${f.placeholder?`placeholder="${f.placeholder}"`:''}></label>
+    `).join('') + `<div class="btnbar"><button class="btn alt" data-remove="${i}">Remove</button></div>`;
+    box.appendChild(row);
+  });
+  box.querySelectorAll('input').forEach(inp => {
+    inp.addEventListener('input', e => {
+      const idx = Number(e.target.dataset.idx);
+      const key = e.target.dataset.key;
+      items[idx][key] = e.target.value;
+    });
+  });
+  box.querySelectorAll('[data-remove]').forEach(btn => {
+    btn.addEventListener('click', e => {
+      const idx = Number(e.currentTarget.dataset.remove);
+      items.splice(idx,1); render();
+    });
+  });
+}
 
-    <section id="about" class="section">
-      <div class="wrap">
-        <h2>About</h2>
-        <p id="aboutText" class="prose"></p>
-      </div>
-    </section>
+function bindBasics(){
+  $('name').value = state.name || '';
+  $('tagline').value = state.tagline || '';
+  $('email').value = state.email || '';
+  $('imdb').value = state.imdb || '';
+  $('headshot').value = state.headshot || '';
+  $('about').value = state.about || '';
+  $('primary').value = state.theme?.primary || '#7a5cff';
+  $('accent').value = state.theme?.accent || '#ff71d8';
+  $('petals').value = state.flower?.petals || 8;
+  $('flowerPetal').value = state.flower?.petal || '#ff71d8';
+  $('flowerCenter').value = state.flower?.center || '#ffd166';
+  $('flowerRing').value = state.flower?.ring || '#8be9fd';
 
-    <section id="acting" class="section altbg">
-      <div class="wrap">
-        <h2>Acting</h2>
-        <div id="reels" class="cards"></div>
-      </div>
-    </section>
+  $('bookingMode').value = state.booking?.mode || 'mailto';
+  $('formspree').value = state.booking?.formspreeEndpoint || '';
+  $('calendly').value = state.booking?.calendly || '';
+}
 
-    <section id="coaching" class="section">
-      <div class="wrap">
-        <h2>Coaching & Classes</h2>
-        <div class="grid-2">
-          <div>
-            <div class="blossom">
-              <video id="coachingVideo" playsinline muted loop controls poster="assets/blossom-poster.svg"></video>
-              <div class="overlay" id="coachingOverlay">“Growth happens one brave choice at a time.”</div>
-            </div>
-          </div>
-          <div>
-            <ul id="services" class="services"></ul>
-          </div>
-        </div>
-      </div>
-    </section>
+function wireBasics(){
+  ['name','tagline','email','imdb','headshot','about'].forEach(id => {
+    $(id).addEventListener('input', e => state[id] = e.target.value);
+  });
+  $('primary').addEventListener('input', e => { state.theme = state.theme||{}; state.theme.primary = e.target.value; });
+  $('accent').addEventListener('input', e => { state.theme = state.theme||{}; state.theme.accent = e.target.value; });
+  $('petals').addEventListener('input', e => { state.flower = state.flower||{}; state.flower.petals = Number(e.target.value)||8; });
+  $('flowerPetal').addEventListener('input', e => { state.flower = state.flower||{}; state.flower.petal = e.target.value; });
+  $('flowerCenter').addEventListener('input', e => { state.flower = state.flower||{}; state.flower.center = e.target.value; });
+  $('flowerRing').addEventListener('input', e => { state.flower = state.flower||{}; state.flower.ring = e.target.value; });
 
-    <section id="hire" class="section altbg">
-      <div class="wrap">
-        <h2>Hire Toni</h2>
-        <ul id="hireCards" class="services"></ul>
-      </div>
-    </section>
+  $('bookingMode').addEventListener('change', e => { state.booking = state.booking||{}; state.booking.mode = e.target.value; });
+  $('formspree').addEventListener('input', e => { state.booking = state.booking||{}; state.booking.formspreeEndpoint = e.target.value; });
+  $('calendly').addEventListener('input', e => { state.booking = state.booking||{}; state.booking.calendly = e.target.value; });
+}
 
-    <section id="testimonials" class="section">
-      <div class="wrap">
-        <h2>Testimonials</h2>
-        <div id="quotes" class="quotes"></div>
-      </div>
-    </section>
+function render(){
+  bindBasics();
+  renderArray('socials', state.socials = state.socials || [], [
+    {label:'Name', key:'name'}, {label:'URL', key:'url'}
+  ]);
+  renderArray('reels', state.reels = state.reels || [], [
+    {label:'Title', key:'title'}, {label:'Src (MP4/JPG path in assets/)', key:'src'}
+  ]);
+  renderArray('services', state.services = state.services || [], [
+    {label:'Title', key:'title'}, {label:'Description', key:'desc'}, {label:'Price', key:'price'}, {label:'Stripe Payment Link (optional)', key:'stripeLink', placeholder:'https://buy.stripe.com/...', type:'url'}
+  ]);
+  renderArray('hire', state.hire = state.hire || [], [
+    {label:'Title', key:'title'}, {label:'Description', key:'desc'}, {label:'Price', key:'price'}
+  ]);
+}
+wireBasics(); render();
 
-    <section id="contact" class="section altbg">
-      <div class="wrap">
-        <h2>Contact / Request a Service</h2>
-        <p>For classes, coaching, or productions, send a request below.</p>
+$('addSocial').addEventListener('click', () => { (state.socials = state.socials||[]).push({name:'Instagram', url:'#'}); render(); });
+$('addReel').addEventListener('click', () => { (state.reels = state.reels||[]).push({title:'New Reel', src:'assets/acting-reel.mp4'}); render(); });
+$('addService').addEventListener('click', () => { (state.services = state.services||[]).push({title:'New Service', desc:'', price:'', stripeLink:''}); render(); });
+$('addHire').addEventListener('click', () => { (state.hire = state.hire||[]).push({title:'Hire Toni — Role', desc:'', price:'Request quote'}); render(); });
 
-        <form id="contactForm" class="contact" action="mailto:someone@example.com" method="post" enctype="text/plain">
-          <div class="field">
-            <label for="f-service">Service</label>
-            <select id="f-service" name="service">
-              <option value="">Select a service…</option>
-            </select>
-          </div>
-          <div class="field">
-            <label for="f-name">Name</label>
-            <input id="f-name" name="name" required>
-          </div>
-          <div class="field">
-            <label for="f-email">Email</label>
-            <input id="f-email" type="email" name="email" required>
-          </div>
-          <div class="field">
-            <label for="f-phone">Phone (optional)</label>
-            <input id="f-phone" type="tel" name="phone" placeholder="(xxx) xxx-xxxx">
-          </div>
-          <div class="field">
-            <label for="f-msg">Message</label>
-            <textarea id="f-msg" name="message" rows="5" placeholder="Tell me about your goals, timing, and availability…" required></textarea>
-          </div>
-          <button class="btn" type="submit">Send Request</button>
-          <p class="hint">Prefer email? <a id="emailLink" href="#">Email Toni directly</a></p>
-          <div id="formStatus" class="hint" aria-live="polite"></div>
-        </form>
-      </div>
-    </section>
-  </main>
-
-  <footer class="site-footer">
-    <div class="wrap">
-      <p>&copy; <span id="year"></span> <span id="footerName">Toni Redman</span>. All rights reserved.</p>
-    </div>
-  </footer>
-
-  <script type="module" src="scripts/config.js"></script>
-  <script type="module" src="scripts/main.js"></script>
-</body>
-</html>
+$('preview').addEventListener('click', () => {
+  try{
+    localStorage.setItem('siteConfigPreview', JSON.stringify(state));
+    alert('Preview saved. Open the site to see your changes.');
+    window.open('index.html','_blank');
+  }catch(e){ alert('Could not save preview: '+e.message); }
+});
+$('export').addEventListener('click', () => {
+  const js = 'export const siteConfig = ' + JSON.stringify(state, null, 2) + ';\n';
+  const blob = new Blob([js], {type:'text/javascript'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = 'config.js'; a.click(); URL.revokeObjectURL(url);
+});
