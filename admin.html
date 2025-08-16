@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Site Editor — Toni</title>
+  <link rel="stylesheet" href="styles/style.css">
+  <style>
+    body{background:#0e1117}
+    .wrap{max-width:980px}
+    .grid{display:grid;gap:14px;grid-template-columns:1fr 1fr}
+    .cardish{background:#101319;border:1px solid rgba(255,255,255,.08);padding:16px;border-radius:12px}
+    label{font-weight:700;margin:.4rem 0 .2rem;display:block}
+    input[type="text"], input[type="url"], input[type="email"], textarea, select{width:100%}
+    textarea{min-height:100px}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .btnbar{display:flex;gap:10px;margin-top:12px}
+    .small{font-size:13px;color:#c8cfdb}
+    .list{display:grid;gap:8px;margin-top:8px}
+    .list .item{border:1px dashed rgba(255,255,255,.1);padding:10px;border-radius:10px}
+  </style>
+</head>
+<body>
+  <header class="site-header"><div class="wrap"><strong>Site Editor</strong> — Fill this out, click <em>Update Preview</em>. Then <em>Export config.js</em> to publish.</div></header>
+  <main class="admin">
+    <div class="wrap">
+      <h1>Content</h1>
+
+      <div class="grid">
+        <section class="cardish">
+          <h2>Basics</h2>
+          <label>Name <input id="name" type="text"></label>
+          <label>Tagline <input id="tagline" type="text"></label>
+          <label>Email <input id="email" type="email"></label>
+          <label>IMDb URL <input id="imdb" type="url"></label>
+          <label>Headshot path (in <code>assets/</code>) <input id="headshot" type="text" placeholder="assets/toni.jpg"></label>
+          <div class="row">
+            <label>Theme Primary <input id="primary" type="text" placeholder="#7a5cff"></label>
+            <label>Theme Accent <input id="accent" type="text" placeholder="#ff71d8"></label>
+          </div>
+        </section>
+
+        <section class="cardish">
+          <h2>About & Flower</h2>
+          <label>About text</label>
+          <textarea id="about"></textarea>
+          <div class="row">
+            <label>Flower Petals <input id="petals" type="text" placeholder="8"></label>
+            <label>Petal Color <input id="flowerPetal" type="text" placeholder="#ff71d8"></label>
+          </div>
+          <div class="row">
+            <label>Center Color <input id="flowerCenter" type="text" placeholder="#ffd166"></label>
+            <label>Ring Color <input id="flowerRing" type="text" placeholder="#8be9fd"></label>
+          </div>
+        </section>
+      </div>
+
+      <section class="cardish">
+        <h2>Socials</h2>
+        <div class="list" id="socials"></div>
+        <div class="btnbar"><button class="btn alt" id="addSocial">+ Add Social</button></div>
+      </section>
+
+      <section class="cardish">
+        <h2>Reels (MP4 or JPG)</h2>
+        <div class="list" id="reels"></div>
+        <div class="btnbar"><button class="btn alt" id="addReel">+ Add Reel</button></div>
+        <p class="small">Upload media to <code>assets/</code> and reference it here.</p>
+      </section>
+
+      <section class="cardish">
+        <h2>Coaching & Classes</h2>
+        <div class="list" id="services"></div>
+        <div class="btnbar"><button class="btn alt" id="addService">+ Add Service</button></div>
+        <p class="small">Optionally add a Stripe Payment Link (shows a Pay Now button).</p>
+      </section>
+
+      <section class="cardish">
+        <h2>Hire Toni (Actor • Director • Producer)</h2>
+        <div class="list" id="hire"></div>
+        <div class="btnbar"><button class="btn alt" id="addHire">+ Add Hire Card</button></div>
+      </section>
+
+      <section class="cardish">
+        <h2>Booking Options</h2>
+        <label>Mode
+          <select id="bookingMode">
+            <option value="mailto">mailto (default)</option>
+            <option value="formspree">formspree</option>
+            <option value="calendly">calendly</option>
+          </select>
+        </label>
+        <div class="row">
+          <label>Formspree Endpoint <input id="formspree" type="url" placeholder="https://formspree.io/f/xxxxx"></label>
+          <label>Calendly Link <input id="calendly" type="url" placeholder="https://calendly.com/your-link"></label>
+        </div>
+      </section>
+
+      <div class="btnbar">
+        <button class="btn" id="preview">Update Preview</button>
+        <button class="btn alt" id="export">Export config.js</button>
+        <a class="btn" href="index.html" target="_blank">Open Site</a>
+      </div>
+      <p class="small">“Update Preview” saves to your browser only. “Export” downloads a <code>config.js</code>; upload that file to publish changes.</p>
+    </div>
+  </main>
+  <script type="module" src="scripts/admin.js"></script>
+</body>
+</html>
